@@ -1,0 +1,13 @@
+name: Counter-Diet-COVID
+title: Counter-Diet-COVID
+username:
+account: dominion
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8510510
+bundleId: 6932699
+url: https://dominion.shinyapps.io/Counter-Diet-COVID/
+when: 1678305220.01197
+lastSyncTime: 1678305220.01199
+asMultiple: FALSE
+asStatic: FALSE
