@@ -199,6 +199,7 @@ ui <- fluidPage(
                  plotOutput("plot1"),
                  textOutput("plotSummary"),
                  plotOutput("plot2"),
+                 textOutput("otherSummary")
                )
              )
     ),
@@ -242,12 +243,12 @@ ui <- fluidPage(
 
 
 server <- function(input, output) {
-  output$sample <- renderDataTable({
+  output$sample <- renderDataTable ({
     filterSet %>% 
       sample_n(12)
   })
   
-  outputSet <- reactive({
+  outputSet <- reactive ({
     filterSet %>% 
       filter(Country %in% input$selection) %>% 
       ggplot(aes(Country, Recovered, fill = factor(Meat))) +
@@ -258,11 +259,11 @@ server <- function(input, output) {
       
   })
   
-  output$chart <- renderPlot({
+  output$chart <- renderPlot ({
     outputSet()
   })
   
-  otherSet <- reactive({
+  otherSet <- reactive ({
     filterSet %>% 
       filter(Country %in% input$response) %>% 
       ggplot(aes(Country, Recovered, fill = factor(`Vegetal Products`))) +
@@ -273,12 +274,12 @@ server <- function(input, output) {
     
   })
   
-  output$chartTwo <- renderPlot({
+  output$chartTwo <- renderPlot ({
     otherSet()
   })
   
   #Create data table for respective variables with list 
-  output$tabledata <- DT::renderDataTable({
+  output$tabledata <- DT::renderDataTable ({
     veggie_data() %>%
       arrange(desc(totalVeg)) %>%
       arrange(desc(totalMeat)) %>%
@@ -287,13 +288,13 @@ server <- function(input, output) {
       datatable(rownames = FALSE, options = list(lengthMenu = c(5, 10, 15), pageLength = 10))
   })
   #Use filter data in the table
-  output$table <- renderTable({
+  output$table <- renderTable ({
     filteredData()
     
   })
   
   #Create data table with respective variables based on new calculated columns 
-  veggie_data <- reactive({
+  veggie_data <- reactive ({
     filteredData() %>% 
       mutate(totalVeg = round(`Vegetal Products` * Population / 100, 0)) %>% 
       mutate(totalMeat = round(Meat * Population / 100, 0)) %>% 
@@ -303,14 +304,14 @@ server <- function(input, output) {
       summarise(totalVeg = sum(totalVeg), totalMeat = sum(totalMeat),totalRecovered = sum(totalRecovered), totalConfirmed = sum(totalConfirmed))
   })
   #Filter and select appropriate variables from original data set
-  filteredData <- reactive({
+  filteredData <- reactive ({
     diet %>%
       filter(Country %in% input$Country) %>%
       select(Country, `Vegetal Products`, Meat, Recovered, Confirmed, Population)
   })
   
   #Make vegetable product consumption plot
-  output$plot1 <- renderPlot({
+  output$plot1 <- renderPlot ({
     diet %>% 
       filter(!is.na(`Vegetal Products`)) %>% 
       sample_n(input$n) %>% 
@@ -322,7 +323,7 @@ server <- function(input, output) {
   })
   
   #Make meat product consumption plot 
-  output$plot2 <- renderPlot({
+  output$plot2 <- renderPlot ({
     diet %>% 
       filter(!is.na(Meat)) %>% 
       sample_n(input$m) %>% 
@@ -334,9 +335,13 @@ server <- function(input, output) {
   })
   
   #Paste number of values selected
-  output$plotSummary <- renderText({
+  output$plotSummary <- renderText ({
     paste("You selected", input$n, "values.")
     
+  })
+  
+  output$otherSummary <- renderText ({
+    paste("You selected", input$m, "values.")
   })
 }
 
